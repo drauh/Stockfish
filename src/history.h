@@ -108,12 +108,20 @@ using LowPlyHistory = Stats<std::int16_t, 7183, LOW_PLY_HISTORY_SIZE, UINT_16_HI
 using CapturePieceToHistory = Stats<std::int16_t, 10692, PIECE_NB, SQUARE_NB, PIECE_TYPE_NB>;
 
 // PieceToHistory is like ButterflyHistory but is addressed by a move's [piece][to]
-using PieceToHistory = Stats<std::int16_t, 30000, PIECE_NB, SQUARE_NB>;
+using PieceToHistoryBase = Stats<std::int16_t, 30000, PIECE_NB, SQUARE_NB>;
+struct alignas(64) PieceToHistory : PieceToHistoryBase {
+    using PieceToHistoryBase::PieceToHistoryBase;
+    using PieceToHistoryBase::operator=;
+};
 
 // ContinuationHistory is the combined history of a given pair of moves, usually
 // the current one given a previous one. The nested history table is based on
 // PieceToHistory instead of ButterflyBoards.
-using ContinuationHistory = MultiArray<PieceToHistory, PIECE_NB, SQUARE_NB>;
+using ContinuationHistoryBase = MultiArray<PieceToHistory, PIECE_NB, SQUARE_NB>;
+struct alignas(64) ContinuationHistory : ContinuationHistoryBase {
+    using ContinuationHistoryBase::ContinuationHistoryBase;
+    using ContinuationHistoryBase::operator=;
+};
 
 // PawnHistory is addressed by the pawn structure and a move's [piece][to]
 using PawnHistory = Stats<std::int16_t, 8192, PAWN_HISTORY_SIZE, PIECE_NB, SQUARE_NB>;
